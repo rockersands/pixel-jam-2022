@@ -1,0 +1,15 @@
+{
+  "a0bbe5bc9ae59924fa7567c6ecc0b6f0": {
+    "sceneGuid": "2cda990e2423bbf4892e6590ba056729",
+    "uniqueCameraId": "a0bbe5bc9ae59924fa7567c6ecc0b6f0",
+    "name": "center",
+    "pointX": 0.0,
+    "pointY": 0.0,
+    "pointZ": 0.0,
+    "directionX": 0.0,
+    "directionY": 0.0,
+    "directionZ": 0.0,
+    "directionW": 1.0,
+    "zoom": 10.0
+  }
+}
