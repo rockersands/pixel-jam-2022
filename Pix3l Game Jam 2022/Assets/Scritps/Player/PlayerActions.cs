@@ -4,39 +4,62 @@ using UnityEngine;
 public class PlayerActions : MonoBehaviour
 {
     #region variables
+    public static List<Transform> followingAnimalsTran = new List<Transform>();
+    public static Transform player;
+    public static bool moving;
     public float speed;
+    [SerializeField] private Sprite up, down,right;
     [SerializeField] private SpriteRenderer playerImage;
     private Rigidbody2D myRigidBody;
     public ActionsPlayer playerControls ;
-    public bool haveSomethinToInteractWith, turningRight, alreadyTurned, alreadyUnlockedMovement;
+    private bool turningRight, turningUp, turningDown, turningLeft;
+    public bool haveSomethinToInteractWith, alreadyTurned, alreadyUnlockedMovement;
     #endregion
     [Header("Raycasts Walls")]
     [SerializeField] private LayerMask InteractableLayers;
     [SerializeField] private BoxCollider2D myTriggerCollider;
-    private GameObject touchingObjectRight, touchingObjectLeft;
+    private GameObject touchingObjectRight, touchingObjectLeft, touchingObjectUp, touchingObjectDown;
     private IInteractable tempIInteractable;
     public float leftWallRayExtra;
     public float rightWallRayExtra;
     public float wallRaysHeights;
     public float rayWallsLenghts;
+    public float upWallRayExtra;
+    public float downWallRayExtra;
+    public float upRaysHorizontals;
+    public float upRayHeight;
+    public float downRaysHorizontals;
+    public float downRayHeight;
+    #region awake
     private void Awake()
     {
+        player = transform;
         myRigidBody = GetComponent<Rigidbody2D>();
         playerControls = new ActionsPlayer();
         playerControls.PlayerActions.Interaction.performed += _ => Interaction();
     }
+    #endregion
+    #region update
     private void Update()
     {
         SidesVerifier();
     }
+    #endregion
+    #region interaction
     private void Interaction()
     {
         if (tempIInteractable != null)
+        {
+            Debug.Log($"interact");
             tempIInteractable.interact();
+        }
     }
+    #endregion
+    #region SidesVerifier
     private void SidesVerifier()
     {
-        if(TouchingLeftWall() && !turningRight)
+
+        if(TouchingLeftWall() && turningLeft)
         {
              tempIInteractable = touchingObjectLeft.GetComponent<IInteractable>();
         }
@@ -44,12 +67,25 @@ public class PlayerActions : MonoBehaviour
         {
             tempIInteractable = touchingObjectRight.GetComponent<IInteractable>();
         }
-        if(!TouchingRightWall() && !TouchingLeftWall())
+        if (TouchingDownWall() && turningDown)
+        {
+            tempIInteractable = touchingObjectDown.GetComponent<IInteractable>();
+            if(tempIInteractable != null)
+                Debug.Log("objectDown");
+        }
+        if (TouchingUpWall() && turningUp)
+        {
+            tempIInteractable = touchingObjectUp.GetComponent<IInteractable>();
+            if (tempIInteractable != null)
+                Debug.Log("objectUp");
+        }
+        if (!TouchingRightWall() && !TouchingLeftWall() && !TouchingDownWall() && !TouchingUpWall())
         {
             tempIInteractable = null;
         }
     }
-    #region SidesCheckRayCast
+    #endregion
+    #region CheckRayCast
     #region LeftWallDetect
     private bool TouchingLeftWall()
     {
@@ -64,7 +100,7 @@ public class PlayerActions : MonoBehaviour
         if (leftWallRay)
         {
             myRayColor = Color.red;
-            if(touchingObjectLeft != null)
+            if(!touchingObjectLeft)
                 touchingObjectLeft = leftWallRay.collider.gameObject;
         }
         else
@@ -107,6 +143,67 @@ public class PlayerActions : MonoBehaviour
         else return false;
     }
     #endregion
+    #region DownWallDetect
+    private bool TouchingDownWall()
+    {
+        Color myRayColor;
+        #region point creation, definition and ray creation
+        Vector2 point = transform.position;
+        point.x -= (myTriggerCollider.bounds.extents.x - downRaysHorizontals);
+        point.y -= (myTriggerCollider.bounds.extents.y - downRayHeight);
+        //leftPoint.y -= (myTriggerCollider.bounds.extents.y - );
+        RaycastHit2D DownWallRay = Physics2D.Raycast(point, Vector2.down, myTriggerCollider.bounds.extents.y + rayWallsLenghts, InteractableLayers);
+        #endregion
+        #region rayColoring and drawing
+        if (DownWallRay)
+        {
+            myRayColor = Color.red;
+            if (!touchingObjectDown)
+            {
+                touchingObjectDown = DownWallRay.collider.gameObject;
+                Debug.Log("i have object down");
+            }
+        }
+        else
+        {
+            myRayColor = Color.white;
+            touchingObjectDown = null;
+        }
+        Debug.DrawRay(point, Vector2.down * (myTriggerCollider.bounds.extents.y + rayWallsLenghts), myRayColor);
+        #endregion
+        #region returning values
+        if (DownWallRay)
+            return true;
+        else return false;
+        #endregion
+    }
+    #endregion
+    #region UpWallDetect
+    private bool TouchingUpWall()
+    {
+        Color myRayColor;
+        Vector2 rightPoint = transform.position;
+        rightPoint.x += (myTriggerCollider.bounds.extents.x + upRaysHorizontals);
+        rightPoint.y -= (myTriggerCollider.bounds.extents.y - upRayHeight);
+        RaycastHit2D upWallRay = Physics2D.Raycast(rightPoint, Vector2.up, myTriggerCollider.bounds.extents.y + rayWallsLenghts, InteractableLayers);
+
+        if (upWallRay)
+        {
+            myRayColor = Color.red;
+            if (!touchingObjectUp)
+                touchingObjectUp = upWallRay.collider.gameObject;
+        }
+        else
+        {
+            myRayColor = Color.white;
+            touchingObjectUp = null;
+        }
+        Debug.DrawRay(rightPoint, Vector2.up * (myTriggerCollider.bounds.extents.y + rayWallsLenghts), myRayColor);
+        if (upWallRay)
+            return true;
+        else return false;
+    }
+    #endregion
     #endregion
     #region Fixed Update
     private void FixedUpdate()
@@ -120,22 +217,47 @@ public class PlayerActions : MonoBehaviour
         Vector2 move = playerControls.PlayerActions.Movement.ReadValue<Vector2>();
         if (move.magnitude > .5)
         {
-            //myAnimator.SetBool("Running", true);
+            moving = true;
+            #region variables
             float x, y;
             x = move.x;
             y = move.y;
+            #endregion
             myRigidBody.velocity = new Vector2((x * speed), (y * speed));
+            #region lados
             if (x > 0)
             {
+                turningRight = true;
                 TurnRight();
+                playerImage.sprite = right;
             }
+            else { turningRight = false; }
             if (x < 0)
             {
                 TurnLeft();
+                turningLeft = true;
+                playerImage.sprite = right;
             }
+            else { turningLeft = false; }
+            if (y > 0)
+            {
+                playerImage.sprite = up;
+                TurnUp();
+                turningUp = true;
+            }
+            else { turningUp = false; }
+            if (y < 0)
+            {
+                TurnDown();
+                turningDown = true; 
+                playerImage.sprite = down;
+            }
+            else { turningDown = false; }
+            #endregion
         }
         if (move.magnitude < .2)
         {
+            moving = false;
             if (alreadyUnlockedMovement)
             {
                 myRigidBody.velocity = Vector2.zero;
@@ -164,37 +286,30 @@ public class PlayerActions : MonoBehaviour
     }
     #endregion
     #region sideChange
+    #region turnUp
+    private void TurnUp()
+    {
+
+    }
+    #endregion#region turnUp
+    #region turnDown
+    private void TurnDown()
+    {
+
+    }
+    #endregion
+    #endregion
     #region turnLeft
     private void TurnLeft()
     {
-
-        if (turningRight)
-        {
-            turningRight = false;
-            alreadyTurned = false;
-        }
-        if (!turningRight && !alreadyTurned)
-        {
-            playerImage.flipX = true;
-            alreadyTurned = true;
-        }
+       playerImage.flipX = true;
     }
     #endregion
     #region turnRight
     private void TurnRight()
     {
-        if (!turningRight)
-        {
-            turningRight = true;
-            alreadyTurned = false;
-        }
-        if (turningRight && !alreadyTurned)
-        {
-            playerImage.flipX = false;
-            alreadyTurned = true;
-        }
+       playerImage.flipX = false;
     }
-    #endregion
     #endregion
     #region onEnableonDisable
     private void OnEnable()
