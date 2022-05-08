@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Chaser : MonoBehaviour,IInteractable
 {
+    private DialogosNpc myDialogNpc;
     public Transform firstPosToGo;
     private bool alreadyChasing;
     public bool chasing,goingFirstPos,aligning;
@@ -20,6 +21,7 @@ public class Chaser : MonoBehaviour,IInteractable
     private void OnEnable()
     {
         speed = originalSpeed;
+        myDialogNpc = GetComponent<DialogosNpc>();
     }
     private void OnDisable()
     {
@@ -41,7 +43,7 @@ public class Chaser : MonoBehaviour,IInteractable
     public void interact()
     {
         if (alreadyChasing) { return; }
-
+        myDialogNpc.MostrarDialogo();
         if (PlayerActions.followingAnimalsTran.Count == 0)
         {
             PlayerActions.followingAnimalsTran.Add(transform);

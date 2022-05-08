@@ -2,22 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-public class DialogosNpc : MonoBehaviour,IInteractable
+public class DialogosNpc : MonoBehaviour
 {
     public GameObject tmpTextGO;
     private TMP_Text myText;
+    [SerializeField] SpriteRenderer mySpriteRenderer;
+    [SerializeReference] Sprite Capy, Ramona, Nathaniel;
     public enum Npc { Capy, Ramona, Nathaniel }
     public Npc myNpc;
-
-    public void interact()
+    private void Start()
     {
-        mostrarDialogo();
+        myText = tmpTextGO.GetComponent<TMP_Text>();
+        switch (myNpc)
+        {
+            case Npc.Capy:
+                mySpriteRenderer.sprite = Capy;
+                break;
+            case Npc.Ramona:
+                mySpriteRenderer.sprite = Ramona;
+                break;
+            case Npc.Nathaniel:
+                mySpriteRenderer.sprite = Nathaniel;
+                break;
+            default:
+                break;
+        }
     }
 
-    private void mostrarDialogo()
+    public void MostrarDialogo()
     {
         tmpTextGO.SetActive(true);
-        myText = tmpTextGO.GetComponent<TMP_Text>();
         MiDialogo();
     }
 
@@ -26,38 +40,23 @@ public class DialogosNpc : MonoBehaviour,IInteractable
         switch (myNpc)
         {
             case Npc.Capy:
-                myText.text = "¡Capy! Ay… estaba tan preocupada, por mi culpa todos están perdidos.";
+                myText.text = "¡Capy! Ay… estaba tan preocupada, \n por mi culpa todos están perdidos.";
                 break;
             case Npc.Ramona:
                 myText.text = "Ramona por fin te encontramos.";
                 break;
             case Npc.Nathaniel:
-                myText.text = "¡Nathaniel, aquí estás! Por fin tendremos el picnic.";
+                myText.text = "¡Nathaniel, aquí estás! \n Por fin tendremos el picnic.";
                 break;
         }
-        StartCoroutine(anotherDialogue());
+        StartCoroutine(AnotherDialogue());
     }
-    IEnumerator anotherDialogue()
+    IEnumerator AnotherDialogue()
     {
         yield return new WaitForSeconds(1.0f);
-        switch (myNpc)
-        {
-            case Npc.Capy:
-                myText.text = "Relájate. Aquí estoy contigo linda. Vamos a buscar a los otros.";
-                break;
-            case Npc.Ramona:
-                myText.text = "Jum… no me perdí, solo vagaba. Además, ni quería venir al picnic.";
-                break;
-            case Npc.Nathaniel:
-                myText.text = "¿Picnic?... oh… así que por eso vine al bosque.";
-                break;
-        }
-        StartCoroutine(AfterSeconds());
+        GameEvents.instance.ActivarDialogo(myNpc);
+        yield return new WaitForSeconds(2.0f);
+        tmpTextGO.SetActive(false);
     }
 
-    IEnumerator AfterSeconds()
-    {
-        yield return new WaitForSeconds(1f);
-        GameEvents.instance.ActivarDialogo(myNpc);
-    }
 }
