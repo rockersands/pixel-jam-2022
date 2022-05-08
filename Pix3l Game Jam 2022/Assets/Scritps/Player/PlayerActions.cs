@@ -18,6 +18,7 @@ public class PlayerActions : MonoBehaviour
     [Header("Raycasts Walls")]
     [SerializeField] private LayerMask InteractableLayers;
     [SerializeField] private BoxCollider2D myTriggerCollider;
+    [SerializeField] private Animator myAnimator;
     private GameObject touchingObjectRight, touchingObjectLeft, touchingObjectUp, touchingObjectDown;
     private IInteractable tempIInteractable;
     public float leftWallRayExtra;
@@ -70,14 +71,12 @@ public class PlayerActions : MonoBehaviour
         if (TouchingDownWall() && turningDown)
         {
             tempIInteractable = touchingObjectDown.GetComponent<IInteractable>();
-            if(tempIInteractable != null)
-                Debug.Log("objectDown");
+           
         }
         if (TouchingUpWall() && turningUp)
         {
             tempIInteractable = touchingObjectUp.GetComponent<IInteractable>();
-            if (tempIInteractable != null)
-                Debug.Log("objectUp");
+           
         }
         if (!TouchingRightWall() && !TouchingLeftWall() && !TouchingDownWall() && !TouchingUpWall())
         {
@@ -161,7 +160,6 @@ public class PlayerActions : MonoBehaviour
             if (!touchingObjectDown)
             {
                 touchingObjectDown = DownWallRay.collider.gameObject;
-                Debug.Log("i have object down");
             }
         }
         else
@@ -224,39 +222,55 @@ public class PlayerActions : MonoBehaviour
             y = move.y;
             #endregion
             myRigidBody.velocity = new Vector2((x * speed), (y * speed));
-            #region lados
+            #region direcciones
             if (x > 0)
             {
+                if(y == 0)
+                    myAnimator.SetBool("PWalkSides", true);
+                playerImage.flipX = false;
                 turningRight = true;
-                TurnRight();
-                playerImage.sprite = right;
             }
-            else { turningRight = false; }
+            else { turningRight = false;
+                if (!turningLeft)
+                    myAnimator.SetBool("PWalkSides", false);
+            }
             if (x < 0)
             {
-                TurnLeft();
+                if (y == 0)
+                    myAnimator.SetBool("PWalkSides", true);
+                playerImage.flipX = true;
                 turningLeft = true;
-                playerImage.sprite = right;
             }
-            else { turningLeft = false; }
+            else { turningLeft = false;
+                if(!turningRight)
+                    myAnimator.SetBool("PWalkSides", false);
+            }
             if (y > 0)
             {
-                playerImage.sprite = up;
-                TurnUp();
+                if (x == 0)
+                    myAnimator.SetBool("PWalkUp", true);
                 turningUp = true;
             }
-            else { turningUp = false; }
+            else {
+                turningUp = false;
+                myAnimator.SetBool("PWalkUp", false);
+            }
             if (y < 0)
             {
-                TurnDown();
+                if (x == 0)
+                    myAnimator.SetBool("PWalkDown", true);
                 turningDown = true; 
-                playerImage.sprite = down;
             }
-            else { turningDown = false; }
+            else { turningDown = false;
+                myAnimator.SetBool("PWalkDown", false);
+            }
             #endregion
         }
         if (move.magnitude < .2)
         {
+            myAnimator.SetBool("PWalkSides", false);
+            myAnimator.SetBool("PWalkDown", false);
+            myAnimator.SetBool("PWalkUp", false);
             moving = false;
             if (alreadyUnlockedMovement)
             {
@@ -283,32 +297,6 @@ public class PlayerActions : MonoBehaviour
     public void StoppedWalking()
     {
        // AudioController.StopContinuosSound(AudioController.ContinuosSound.PlayerRunning);
-    }
-    #endregion
-    #region sideChange
-    #region turnUp
-    private void TurnUp()
-    {
-
-    }
-    #endregion#region turnUp
-    #region turnDown
-    private void TurnDown()
-    {
-
-    }
-    #endregion
-    #endregion
-    #region turnLeft
-    private void TurnLeft()
-    {
-       playerImage.flipX = true;
-    }
-    #endregion
-    #region turnRight
-    private void TurnRight()
-    {
-       playerImage.flipX = false;
     }
     #endregion
     #region onEnableonDisable

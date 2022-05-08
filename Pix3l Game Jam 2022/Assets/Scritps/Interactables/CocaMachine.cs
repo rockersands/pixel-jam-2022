@@ -5,6 +5,10 @@ using UnityEngine;
 public class CocaMachine : MonoBehaviour , IInteractable
 {
     [SerializeField] private GameObject visualCoke;
+    public void interact()
+    {
+        DispenseCoke();
+    }
     private void DispenseCoke()
     {
         if(Inventory.currentCoins >= 3)
@@ -17,14 +21,12 @@ public class CocaMachine : MonoBehaviour , IInteractable
             GameEvents.instance.UpdateCoin();
         }
     }
-    public void interact()
-    {
-        DispenseCoke();
-    }
+   
     IEnumerator AfterSeconds()
     {
         visualCoke.SetActive(true);
         yield return new WaitForSeconds(.3f);
+        GameEvents.instance.DialogoNath();
         visualCoke.SetActive(false);
     }
 }
