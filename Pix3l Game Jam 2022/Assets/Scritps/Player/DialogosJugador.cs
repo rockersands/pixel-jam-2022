@@ -9,22 +9,20 @@ public class DialogosJugador : MonoBehaviour
     private void Start()
     {
         playerDialogue = tmpTextObject.GetComponent<TMP_Text>();
-        GameEvents.instance.DialogoNath_Ev += DialogoNath;
+        GameEvents.instance.ActivarDialogo_Ev += DialogoNath;
     }
-    private void DialogoNath()
+    private void DialogoNath(DialogosNpc.Npc npc)
     {
-        string diagNath = "¿Picnic?... oh… así que por eso vine al bosque.";
-        tmpTextObject.SetActive(true);
-        playerDialogue.text = diagNath;
-    }
-    private void DialogoRamona()
-    {
-        string diagNath = "¿Picnic?... oh… así que por eso vine al bosque.";
-
-    }
-    private void DialogoCapy()
-    {
-        string diagNath = "¿Picnic?... oh… así que por eso vine al bosque.";
-
+        switch (npc)
+        {
+            case DialogosNpc.Npc.estrella:
+                break;
+            case DialogosNpc.Npc.mar:
+                break;
+            case DialogosNpc.Npc.samantha:
+                break;
+            default:
+                break;
+        }
     }
 }

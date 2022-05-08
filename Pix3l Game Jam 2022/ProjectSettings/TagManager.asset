@@ -12,10 +12,10 @@ TagManager:
   - Water
   - UI
   - Interactable
-  - 
-  - 
-  - 
-  - 
+  - BoundsCam
+  - Cam
+  - BackGround
+  - Foreground
   - 
   - 
   - 

@@ -26,7 +26,6 @@ public class CocaMachine : MonoBehaviour , IInteractable
     {
         visualCoke.SetActive(true);
         yield return new WaitForSeconds(.3f);
-        GameEvents.instance.DialogoNath();
         visualCoke.SetActive(false);
     }
 }

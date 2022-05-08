@@ -8,26 +8,16 @@ public class GameEvents : MonoBehaviour
     public static GameEvents instance = new GameEvents();
     public event Action UpdateCoin_Ev;
     public event Action UpdateCoca_Ev;
-    public event Action DialogoCapy_Ev;
-    public event Action DialogoNath_Ev;
-    public event Action DialogoRamona_Ev;
+    public event Action<DialogosNpc.Npc> ActivarDialogo_Ev;
 
     private void Awake()
     {
         if (instance != null)
             Destroy(this);
     }
-    public void DialogoCapy()
+    public void ActivarDialogo(DialogosNpc.Npc npc)
     {
-        DialogoCapy_Ev?.Invoke();
-    }
-    public void DialogoNath()
-    {
-        DialogoNath_Ev?.Invoke();
-    }
-    public void DialogoRamona()
-    {
-        DialogoRamona_Ev?.Invoke();
+        ActivarDialogo_Ev?.Invoke(npc);
     }
     public void UpdateCoin()
     {
