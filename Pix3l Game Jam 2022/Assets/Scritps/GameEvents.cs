@@ -6,7 +6,8 @@ using UnityEngine;
 public class GameEvents : MonoBehaviour
 {
     public static GameEvents instance = new GameEvents();
-    public event Action UpdateCoin_Ev;
+    public event Action UpdateCoin_Ev; 
+    public event Action FinishedGame_Ev;
     public event Action UpdateCoca_Ev;
     public event Action<DialogosNpc.Npc> ActivarDialogo_Ev;
 
@@ -14,6 +15,10 @@ public class GameEvents : MonoBehaviour
     {
         if (instance != null)
             Destroy(this);
+    }
+    public void FinishedGame()
+    {
+        FinishedGame_Ev?.Invoke();
     }
     public void ActivarDialogo(DialogosNpc.Npc npc)
     {

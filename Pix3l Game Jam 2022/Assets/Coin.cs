@@ -8,6 +8,7 @@ public class Coin : MonoBehaviour
     {
         Inventory.currentCoins += 1;
         GameEvents.instance.UpdateCoin();
+        AudioController.PlaySfx(AudioController.Sfx.monedas);
         Destroy(gameObject);
     }
 

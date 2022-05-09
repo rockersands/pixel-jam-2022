@@ -5,11 +5,12 @@ using UnityEngine.Audio;
 public static class AudioController
 {
     #region variables
-    public static AudioMixerGroup sfxMixerGroup, songsMixerGroup;
+    public static AudioMixerGroup sfxMixerGroup, songsMixerGroup,voiceMixerGroup;
     private static List<AudioSource> myAudioSourcesContinuos = new List<AudioSource>();
     private static List<AudioSource> myAudioSourcesSfx = new List<AudioSource>();
+    private static List<AudioSource> myAudioSourcesVoices = new List<AudioSource>();
     private static List<AudioSource> myAudioSourcesSongs = new List<AudioSource>();
-    private static GameObject sfxParent, SongsParent, ContinuosParent;
+    private static GameObject sfxParent, SongsParent, ContinuosParent,voicesParent;
     #endregion
     #region Enums
     #region ContinuosSound
@@ -18,10 +19,16 @@ public static class AudioController
         PlayerRunning
     }
     #endregion
+    #region Voice
+    public enum Voice
+    {
+         playerTalk, ramonaTalk, capyTalk, nathTalk
+    }
+    #endregion
     #region Sfx
     public enum Sfx
     {
-        playerHit, playerInteract, playerTalk,
+        monedas, playerInteract,
         playerDie
     }
 #endregion
@@ -157,9 +164,36 @@ public static class AudioController
         }
     }
     #endregion
+    #region PlayVoices
+    public static void PlayVoices(Voice sound)
+    {
+        if (voicesParent == null)
+        {
+            voicesParent = new GameObject("VoicesAudSourParent");
+        }
+        bool foundAvailableAudioSource = false;
+        for (int i = 0; i < myAudioSourcesVoices.Count; i++)
+        {
+            if (!myAudioSourcesVoices[i].isPlaying)
+            {
+                foundAvailableAudioSource = true;
+                myAudioSourcesVoices[i].PlayOneShot(GetVoiceAudioClip(sound));
+            }
+        }
+        if (!foundAvailableAudioSource)
+        {
+            GameObject soundGameObject = new GameObject("Voice");
+            AudioSource audioSource = soundGameObject.AddComponent<AudioSource>();
+            soundGameObject.transform.parent = voicesParent.transform;
+            audioSource.outputAudioMixerGroup = voiceMixerGroup;
+            myAudioSourcesVoices.Add(audioSource);
+            audioSource.PlayOneShot(GetVoiceAudioClip(sound));
+        }
+    }
+    #endregion
     #endregion
     #region GettingAudioclips
-    #region GetSongAudioClip
+    #region GetContinuosAudioClip
     private static AudioClip GetContinuosAudioClip(ContinuosSound sound)
     {
         foreach (GameAssets.ContinuosAudioClip soundAudioClip in GameAssets.Instance.ContinuosAudioClipArray)
@@ -177,6 +211,20 @@ public static class AudioController
     private static AudioClip GetSongAudioClip(Songs sound)
     {
         foreach (GameAssets.SongAudioClip soundAudioClip in GameAssets.Instance.SongAudioClipArray)
+        {
+            if (soundAudioClip.sound == sound)
+            {
+                return soundAudioClip.audioClip;
+            }
+        }
+        Debug.LogError($"Sound {sound} not found");
+        return null;
+    }
+    #endregion
+    #region GetVoiceAudioClip
+    private static AudioClip GetVoiceAudioClip(Voice sound)
+    {
+        foreach (GameAssets.VoiceAudioClip soundAudioClip in GameAssets.Instance.VoiceAudioClipArray)
         {
             if (soundAudioClip.sound == sound)
             {

@@ -6,15 +6,14 @@ public class PlayerActions : MonoBehaviour
     #region variables
     public static List<Transform> followingAnimalsTran = new List<Transform>();
     public static Transform player;
-    public static bool moving;
+    public static bool moving,gameStarted;
     public float speed;
-    [SerializeField] private Sprite up, down,right;
     [SerializeField] private SpriteRenderer playerImage;
     private Rigidbody2D myRigidBody;
     public ActionsPlayer playerControls ;
-    private bool turningRight, turningUp, turningDown, turningLeft;
+    private bool turningRight, turningUp, turningDown, turningLeft,walking;
     public bool haveSomethinToInteractWith, alreadyTurned, alreadyUnlockedMovement;
-    #endregion
+    #region Raycasts Walls
     [Header("Raycasts Walls")]
     [SerializeField] private LayerMask InteractableLayers;
     [SerializeField] private BoxCollider2D myTriggerCollider;
@@ -31,6 +30,16 @@ public class PlayerActions : MonoBehaviour
     public float upRayHeight;
     public float downRaysHorizontals;
     public float downRayHeight;
+    #endregion
+    #endregion
+    public void GameStarted()
+    {
+        gameStarted = true;
+    }
+    public void CantMovePlayer()
+    {
+        gameStarted = false;
+    }
     #region awake
     private void Awake()
     {
@@ -54,6 +63,8 @@ public class PlayerActions : MonoBehaviour
             Debug.Log($"interact");
             tempIInteractable.interact();
         }
+        if (followingAnimalsTran.Count == 3)
+            GameEvents.instance.FinishedGame();
     }
     #endregion
     #region SidesVerifier
@@ -206,6 +217,7 @@ public class PlayerActions : MonoBehaviour
     #region Fixed Update
     private void FixedUpdate()
     {
+        if(!gameStarted) { return; }
         Move();
     }
     #endregion
@@ -215,6 +227,7 @@ public class PlayerActions : MonoBehaviour
         Vector2 move = playerControls.PlayerActions.Movement.ReadValue<Vector2>();
         if (move.magnitude > .5)
         {
+            StartedWalking();
             moving = true;
             #region variables
             float x, y;
@@ -222,8 +235,11 @@ public class PlayerActions : MonoBehaviour
             y = move.y;
             #endregion
             myRigidBody.velocity = new Vector2((x * speed), (y * speed));
+            
+            float yDiff = Mathf.Abs(move.y);
+            float xDiff = Mathf.Abs(move.x);
             #region direcciones
-            if (x > 0)
+            if (x > 0 )
             {
                 if(y == 0)
                     myAnimator.SetBool("PWalkSides", true);
@@ -234,7 +250,7 @@ public class PlayerActions : MonoBehaviour
                 if (!turningLeft)
                     myAnimator.SetBool("PWalkSides", false);
             }
-            if (x < 0)
+            if (x < 0 )
             {
                 if (y == 0)
                     myAnimator.SetBool("PWalkSides", true);
@@ -245,7 +261,7 @@ public class PlayerActions : MonoBehaviour
                 if(!turningRight)
                     myAnimator.SetBool("PWalkSides", false);
             }
-            if (y > 0)
+            if (y > 0 )
             {
                 if (x == 0)
                     myAnimator.SetBool("PWalkUp", true);
@@ -255,7 +271,7 @@ public class PlayerActions : MonoBehaviour
                 turningUp = false;
                 myAnimator.SetBool("PWalkUp", false);
             }
-            if (y < 0)
+            if (y < 0 )
             {
                 if (x == 0)
                     myAnimator.SetBool("PWalkDown", true);
@@ -268,6 +284,8 @@ public class PlayerActions : MonoBehaviour
         }
         if (move.magnitude < .2)
         {
+            StoppedWalking();
+            walking = false;
             myAnimator.SetBool("PWalkSides", false);
             myAnimator.SetBool("PWalkDown", false);
             myAnimator.SetBool("PWalkUp", false);
@@ -292,11 +310,19 @@ public class PlayerActions : MonoBehaviour
     #region sound walking
     public void StartedWalking()
     {
-        //AudioController.PlayContinuosSound(AudioController.ContinuosSound.PlayerRunning);
+        if (!walking)
+        {
+            AudioController.PlayContinuosSound(AudioController.ContinuosSound.PlayerRunning);
+            walking = true;
+        }
     }
     public void StoppedWalking()
     {
-       // AudioController.StopContinuosSound(AudioController.ContinuosSound.PlayerRunning);
+        if (walking)
+        {
+            AudioController.StopContinuosSound(AudioController.ContinuosSound.PlayerRunning);
+            walking = false;
+        }
     }
     #endregion
     #region onEnableonDisable

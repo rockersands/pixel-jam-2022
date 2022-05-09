@@ -4,16 +4,16 @@ TextureImporter:
   internalIDToNameTable:
   - first:
       213: -6793546094431307122
-    second: capy
+    second: nath
   - first:
       213: 2555071131087466780
     second: Personajes_1
   - first:
       213: 3330374347584649851
-    second: ramona
+    second: nath
   - first:
       213: 7912255684870006209
-    second: nathaniel
+    second: cap
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -139,7 +139,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: capy
+      name: ramona
       rect:
         serializedVersion: 2
         x: 68
@@ -181,7 +181,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ramona
+      name: nath
       rect:
         serializedVersion: 2
         x: 369
@@ -202,7 +202,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: nathaniel
+      name: cap
       rect:
         serializedVersion: 2
         x: 519

@@ -19,14 +19,23 @@ public class GameAssets : MonoBehaviour
     [Header("MixerGroups")]
     public AudioMixerGroup sfxMixerGroup;
     public AudioMixerGroup songsMixerGroup;
+    public AudioMixerGroup voiceMixerGroup;
     [Header("SoundClips")]
+    public VoiceAudioClip[] VoiceAudioClipArray;
     public SfxAudioClip[] SfxAudioClipArray;
     public SongAudioClip[] SongAudioClipArray;
     public ContinuosAudioClip[] ContinuosAudioClipArray;
     private void Start()
     {
+        AudioController.voiceMixerGroup = voiceMixerGroup;
         AudioController.sfxMixerGroup = sfxMixerGroup;
         AudioController.songsMixerGroup = songsMixerGroup;
+    }
+    [System.Serializable]
+    public class VoiceAudioClip
+    {
+        public AudioController.Voice sound;
+        public AudioClip audioClip;
     }
     [System.Serializable]
     public class SfxAudioClip

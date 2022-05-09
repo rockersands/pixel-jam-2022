@@ -4,10 +4,10 @@ using UnityEngine;
 using TMPro;
 public class DialogosNpc : MonoBehaviour
 {
-    public GameObject tmpTextGO;
+    public GameObject tmpTextGO,canvasGo;
     private TMP_Text myText;
     [SerializeField] SpriteRenderer mySpriteRenderer;
-    [SerializeReference] Sprite Capy, Ramona, Nathaniel;
+    [SerializeField] private Sprite Capy, Ramona, Nathaniel;
     public enum Npc { Capy, Ramona, Nathaniel }
     public Npc myNpc;
     private void Start()
@@ -31,7 +31,7 @@ public class DialogosNpc : MonoBehaviour
 
     public void MostrarDialogo()
     {
-        tmpTextGO.SetActive(true);
+        canvasGo.SetActive(true);
         MiDialogo();
     }
 
@@ -40,23 +40,26 @@ public class DialogosNpc : MonoBehaviour
         switch (myNpc)
         {
             case Npc.Capy:
-                myText.text = "¡Capy! Ay… estaba tan preocupada, \n por mi culpa todos están perdidos.";
+                AudioController.PlayVoices(AudioController.Voice.capyTalk);
+                AudioController.PlayContinuosSound(AudioController.ContinuosSound.PlayerRunning);
+                myText.text = "Relájate. Aquí estoy contigo linda.\n Vamos a buscar a los otros.";
                 break;
             case Npc.Ramona:
-                myText.text = "Ramona por fin te encontramos.";
+                AudioController.PlayVoices(AudioController.Voice.ramonaTalk);
+                myText.text = "Jum… no me perdí, solo vagaba. Además,\n ni quería venir al picnic.";
                 break;
             case Npc.Nathaniel:
-                myText.text = "¡Nathaniel, aquí estás! \n Por fin tendremos el picnic.";
+                AudioController.PlayVoices(AudioController.Voice.nathTalk);
+                myText.text = "¿Picnic?... oh… así que por\n eso vine al bosque.";
                 break;
         }
         StartCoroutine(AnotherDialogue());
     }
     IEnumerator AnotherDialogue()
     {
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(5.0f);
+        canvasGo.SetActive(false);
         GameEvents.instance.ActivarDialogo(myNpc);
-        yield return new WaitForSeconds(2.0f);
-        tmpTextGO.SetActive(false);
     }
 
 }

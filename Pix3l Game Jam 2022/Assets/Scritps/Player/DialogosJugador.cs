@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 public class DialogosJugador : MonoBehaviour
 {
-    [SerializeField]private GameObject tmpTextObject;
+    [SerializeField]private GameObject tmpTextObject,CanvasGo;
     private TMP_Text playerDialogue;
     private void Start()
     {
@@ -13,17 +13,18 @@ public class DialogosJugador : MonoBehaviour
     }
     private void ActivarDialogo(DialogosNpc.Npc npc)
     {
-        tmpTextObject.SetActive(true);
+        CanvasGo.SetActive(true);
+        AudioController.PlayVoices(AudioController.Voice.playerTalk);
         switch (npc)
         {
             case DialogosNpc.Npc.Capy:
-                playerDialogue.text = "Relájate. Aquí estoy contigo linda.\n Vamos a buscar a los otros.";
+                playerDialogue.text = "¡Capy! Ay… estaba tan preocupada, \n por mi culpa todos están perdidos.";
                 break;
             case DialogosNpc.Npc.Ramona:
-                playerDialogue.text = "Jum… no me perdí, solo vagaba. Además,\n ni quería venir al picnic.";
+                playerDialogue.text = "Ramona por fin te encontramos.";
                 break;
             case DialogosNpc.Npc.Nathaniel:
-                playerDialogue.text = "¿Picnic?... oh… así que por\n eso vine al bosque.";
+                playerDialogue.text = "¡Nathaniel, aquí estás! \n Por fin tendremos el picnic.";
                 break;
             default:
                 break;
@@ -33,7 +34,7 @@ public class DialogosJugador : MonoBehaviour
 
     IEnumerator TurnOffTextBubble()
     {
-        yield return new WaitForSeconds(3f);
-        tmpTextObject.SetActive(false);
+        yield return new WaitForSeconds(5f);
+        CanvasGo.SetActive(false);
     }
 }
