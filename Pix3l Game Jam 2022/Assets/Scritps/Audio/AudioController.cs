@@ -6,11 +6,11 @@ public static class AudioController
 {
     #region variables
     public static AudioMixerGroup sfxMixerGroup, songsMixerGroup,voiceMixerGroup;
-    private static List<AudioSource> myAudioSourcesContinuos = new List<AudioSource>();
-    private static List<AudioSource> myAudioSourcesSfx = new List<AudioSource>();
-    private static List<AudioSource> myAudioSourcesVoices = new List<AudioSource>();
-    private static List<AudioSource> myAudioSourcesSongs = new List<AudioSource>();
-    private static GameObject sfxParent, SongsParent, ContinuosParent,voicesParent;
+    public static List<AudioSource> myAudioSourcesContinuos = new List<AudioSource>();
+    public static List<AudioSource> myAudioSourcesSfx = new List<AudioSource>();
+    public static List<AudioSource> myAudioSourcesVoices = new List<AudioSource>();
+    public static List<AudioSource> myAudioSourcesSongs = new List<AudioSource>();
+    public static GameObject sfxParent, SongsParent, ContinuosParent,voicesParent;
     #endregion
     #region Enums
     #region ContinuosSound

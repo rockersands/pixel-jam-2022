@@ -10,7 +10,7 @@ public class PlayerActions : MonoBehaviour
     public float speed;
     [SerializeField] private SpriteRenderer playerImage;
     private Rigidbody2D myRigidBody;
-    public ActionsPlayer playerControls ;
+    private ActionsPlayer playerControls;
     private bool turningRight, turningUp, turningDown, turningLeft,walking;
     public bool haveSomethinToInteractWith, alreadyTurned, alreadyUnlockedMovement;
     #region Raycasts Walls
@@ -32,14 +32,6 @@ public class PlayerActions : MonoBehaviour
     public float downRayHeight;
     #endregion
     #endregion
-    public void GameStarted()
-    {
-        gameStarted = true;
-    }
-    public void CantMovePlayer()
-    {
-        gameStarted = false;
-    }
     #region awake
     private void Awake()
     {
@@ -47,12 +39,43 @@ public class PlayerActions : MonoBehaviour
         myRigidBody = GetComponent<Rigidbody2D>();
         playerControls = new ActionsPlayer();
         playerControls.PlayerActions.Interaction.performed += _ => Interaction();
+        playerControls.PlayerActions.Pause.performed += _ => Pause();
+    }
+    #endregion
+    private void Start()
+    {
+        moving = false;gameStarted = false;
+        followingAnimalsTran.Clear();
+        GameEvents.instance.GameStart_Ev += GameStarted;
+        GameEvents.instance.ResumeGame_Ev += ResumeGame;
+        GameEvents.instance.PauseGame_Ev += PauseGame;
+        Debug.Log("subs");
+    }
+    #region movementRestrictions
+    public void GameStarted()
+    {
+        gameStarted = true;
+        Debug.Log($"gewgweg{gameStarted}");
+    }
+    public void PauseGame()
+    {
+            gameStarted = false;
+    }
+    public void ResumeGame()
+    {
+            gameStarted = true;
     }
     #endregion
     #region update
     private void Update()
     {
         SidesVerifier();
+    }
+    #endregion
+    #region pause
+    private void Pause()
+    {
+        GameEvents.instance.PauseGame();
     }
     #endregion
     #region interaction
@@ -218,6 +241,7 @@ public class PlayerActions : MonoBehaviour
     private void FixedUpdate()
     {
         if(!gameStarted) { return; }
+        Debug.Log("fuck");
         Move();
     }
     #endregion

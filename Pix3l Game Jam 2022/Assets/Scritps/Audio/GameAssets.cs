@@ -27,6 +27,15 @@ public class GameAssets : MonoBehaviour
     public ContinuosAudioClip[] ContinuosAudioClipArray;
     private void Start()
     {
+        AudioController.myAudioSourcesContinuos.Clear();
+        AudioController.myAudioSourcesSfx.Clear();
+        AudioController.myAudioSourcesVoices.Clear();
+        AudioController.myAudioSourcesSongs.Clear();
+        AudioController.sfxParent = null;
+        AudioController.SongsParent = null;
+        AudioController.ContinuosParent = null;
+        AudioController.voicesParent = null;
+
         AudioController.voiceMixerGroup = voiceMixerGroup;
         AudioController.sfxMixerGroup = sfxMixerGroup;
         AudioController.songsMixerGroup = songsMixerGroup;
